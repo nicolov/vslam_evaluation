@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<launch>
+  <!-- Helps make performance measurements -->
+  <arg name="stop_at_bag_end" default="false" />
+
+  <node pkg="rovio" type="rovio_node" name="rovio" output="screen">
+    <param name="filter_config" value="$(find rovio)/cfg/rovio.info"/>
+    <param name="camera0_config" value="$(find rovio)/cfg/euroc_cam0.yaml"/>
+    <param name="camera1_config" value="$(find rovio)/cfg/euroc_cam1.yaml"/>
+  </node>
+
+  <node pkg="rosbag"
+        type="play"
+        name="bag"
+        args="-r 1 --clock $(env HOME)/bags/V1_01_easy.bag"
+        required="$(arg stop_at_bag_end)">
+  </node>
+
+  <node pkg="rosbag"
+        type="record"
+        name="bag_record"
+        args="-O $(find vslam_evaluation)/out/rovio_traj.bag
+              /vicon/firefly_sbx/firefly_sbx
+              /rovio/odometry"
+        output="screen">
+  </node>
+</launch>

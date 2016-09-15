@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<launch>
+  <arg name="bagfile" default="$(env HOME)/bags/V1_01_easy_wcaminfo.bag"/>
+  <arg name="camera" default="/cam"/>
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- Helps make performance measurements -->
+  <arg name="stop_at_bag_end" default="false" />
+
+  <node pkg="rosbag"
+        type="play"
+        name="rosbag"
+        args="--clock $(arg bagfile)"
+        required="$(arg stop_at_bag_end)" />
+
+  <node ns="$(arg camera)"
+        pkg="stereo_image_proc"
+        type="stereo_image_proc"
+        name="stereo_image_proc" />
+
+  <node pkg="viso2_ros"
+        type="stereo_odometer"
+        name="stereo_odometer"
+        output="screen">
+    <remap from="stereo" to="$(arg camera)"/>
+    <remap from="image" to="image_rect"/>
+    <param name="base_link_frame_id" value="$(arg camera)"/>
+    <param name="ref_frame_change_method" value="1" />
+  </node>
+
+  <node pkg="rosbag"
+        type="record"
+        name="bag_record"
+        args="-O $(find vslam_evaluation)/out/viso2_traj.bag
+              /vicon/firefly_sbx/firefly_sbx
+              /stereo_odometer/odometry"
+        output="screen">
+  </node>
+
+</launch>

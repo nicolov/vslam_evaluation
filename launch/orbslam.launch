@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- Disables local mapping -->
+    <arg name="tracking_only" default="false" />
+    <!-- Helps make performance measurements -->
+    <arg name="stop_at_bag_end" default="false" />
+
+    <node pkg="orb_slam2"
+          type="stereo"
+          name="slam"
+          output="screen">
+        <param name="settings_file"
+               value="$(find orb_slam2)/../../../Examples/Stereo/EuRoC.yaml" />
+        <param name="vocabulary_file"
+               value="$(find orb_slam2)/../../../Vocabulary/ORBvoc.bin" />
+        <param name="rectify" value="true" />
+        <param name="tracking_only" value="$(arg tracking_only)" />
+    </node>
+
+    <node pkg="rosbag"
+          type="play"
+          name="bag"
+          args="--clock -r 1 $(env HOME)/bags/V1_01_easy.bag"
+          required="$(arg stop_at_bag_end)">
+        <remap from="/cam0/image_raw" to="/camera/left/image_raw" />
+        <remap from="/cam1/image_raw" to="/camera/right/image_raw" />
+    </node>
+
+    <node pkg="rosbag"
+          type="record"
+          name="bag_record"
+          args="-O $(find vslam_evaluation)/out/orb_stereo_$(arg tracking_only)_traj.bag
+              /vicon/firefly_sbx/firefly_sbx
+              /orb/odometry"
+          output="screen">
+    </node>
+</launch>
