@@ -1,6 +1,6 @@
 # Visual SLAM evaluation code
 
-<iframe width="600" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~nikoperugia/35.embed"></iframe>
+<img src="https://github.com/nicolov/vslam_evaluation/raw/master/example_plot.png" width="500" style="text-align: center"/>
 
 Code for the evaluation of open-source visual-odometry/SLAM systems I wrote about [in my blog](http://nicolovaligi.com/open-source-visual-slam-evaluation.html). You'll need to install the packages separately, as this repo only contains the configurations and ROS launch file needed to reproduce my results.
 
